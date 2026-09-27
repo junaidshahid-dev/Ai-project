@@ -153,6 +153,11 @@ def main():
         summary["tess_per_speaker"] = {s_: float((g["pred"] == g["label"]).mean()) for s_, g in x.groupby("speaker")}
         summary["tess_pred_distribution"] = x["pred"].map(dict(enumerate(EMOTIONS))).value_counts(normalize=True).to_dict()
         summary["tess_per_emotion_recall"] = {e: float((g["pred"] == g["label"]).mean()) for e, g in x.groupby("emotion")}
+        if (RES / "tess_offset_check.json").exists():  # controlled padding test
+            summary["tess_offset_check"] = json.load(open(RES / "tess_offset_check.json"))
+    if "tess_to_ravdess" in have:
+        x = main_p[(main_p["experiment"] == "tess_to_ravdess") & (main_p["model"] == "Ensemble")]
+        summary["rav_pred_distribution"] = x["pred"].map(dict(enumerate(EMOTIONS))).value_counts(normalize=True).to_dict()
 
     # ---- Ablation (paper split) ---------------------------------------------
     abl = pd.DataFrame()

@@ -66,7 +66,8 @@ def index_tess(root):
         emotion = TESS_CODES[parts[2].lower()]
         rows.append({
             "path": str(p), "dataset": "TESS", "emotion": emotion,
-            "label": LABEL_TO_ID[emotion], "speaker": parts[0].upper(),
+            # One Kaggle file is misnamed "OA_bite_neutral.wav" (folder OAF_neutral).
+            "label": LABEL_TO_ID[emotion], "speaker": "OAF" if parts[0].upper().startswith("OA") else "YAF",
             "actor": -1, "gender": "female", "intensity": "n/a",
         })
     return pd.DataFrame(rows)
