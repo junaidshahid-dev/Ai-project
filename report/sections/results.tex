@@ -1,0 +1,161 @@
+\section{Results}
+Table~\ref{tab:main} summarises all models under the four protocols; Fig.~\ref{fig:comparison} visualises the three
+RAVDESS-based protocols and the RAVDESS$\to$TESS transfer.
+
+\begin{table*}[t]
+\centering
+\caption{Accuracy / macro-F1 (\%) on the test sets. Speaker-independent: pooled over all 1,440 clips, $\pm$ is the
+standard deviation of accuracy across the 4 speaker folds. Chance (majority class) is 20.0\% on RAVDESS and 14.3\% on
+TESS. Bold: best model per protocol, when above chance.}
+\label{tab:main}
+\input{generated/tab_main.tex}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{../results/figures/fig_model_comparison.pdf}
+\caption{Accuracy of every model as the protocol becomes stricter (left to right). Grey: classical baselines;
+blue: the paper's models. The same ensemble ranges from \AccLeakyEns\% to \AccRTEns\%.}
+\label{fig:comparison}
+\end{figure*}
+
+\subsection{H1 -- Replication under the paper's protocol}
+With augmentation applied to training clips only, our ensemble reaches \AccPaperEns\% accuracy
+(weighted F1 \FwPaperEns\%), \ReportedGapEns{} points below the 97.57\% reported (Table~\ref{tab:replication}). The ordering of the
+models matches the paper (ensemble $\geq$ CNN\_Bi-LSTM $\geq$ 1D-CNN), and all deep models beat the SVM
+(\AccPaperSvm\%) and Random Forest (\AccPaperRf\%). \textbf{H1 is not supported}: the reported figure is not
+reproduced under a leak-free split.
+
+\begin{table}[t]
+\centering
+\caption{RAVDESS replication: accuracy and weighted F1 (\%).}
+\label{tab:replication}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{\input{generated/tab_replication.tex}}
+\end{table}
+
+\subsection{H2 -- Augmenting before splitting inflates accuracy}
+When the 5,760 augmented samples are pooled \emph{before} the 80/10/10 split, \LeakyOverlap\% of the test samples
+have at least one augmented copy of the same recording in the training set. The ensemble then scores
+\AccLeakyEns\% (1D-CNN \AccLeakyCnn\%), within about one percentage point of the paper's 97.57\% and 96.18\%.
+Accuracy is \LeakyAccOriginal\% on original test clips and \LeakyAccNoisepitch\% on noise+pitch copies, i.e.\ the
+model recognises recordings it has effectively already seen. \textbf{H2 is supported}. The paper does not state
+the split order, so we cannot prove this is what happened there, but it is the only one of our settings that
+reproduces its numbers, and the inflation (+\LeakGainEns{} points for the ensemble) is much larger for the high-capacity deep
+models than for the SVM (+\LeakGainSvm), consistent with memorisation of near-duplicates~\cite{kapoor2023leakage}.
+
+\subsection{H3 -- Unseen speakers}
+Holding out whole actors lowers ensemble accuracy to \AccSpkEns\,$\pm$\,\AccStdSpkEns\% (macro-F1 \FoneSpkEns\%), a
+drop of \SpkDropEns{} points from the paper protocol. The deep models still beat the best classical baseline
+(SVM, \AccSpkSvm\%) by \SpkEnsOverSvm{} points, so they do learn transferable cues, but performance varies strongly between
+speakers: from \ActorAccMin\% (\ActorMin) to \ActorAccMax\% (\ActorMax). Recall is highest for \SpkRecallMaxName{}
+(\SpkRecallMax\%) and lowest for \SpkRecallMinName{} (\SpkRecallMin\%); the most frequent errors are
+\ConfOne{} (\ConfOnePct\% of sad clips), \ConfTwo{} (\ConfTwoPct\%) and \ConfThree{} (\ConfThreePct\%)
+(Fig.~\ref{fig:confusion}). \textbf{H3 is supported}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{../results/figures/fig_confusion.pdf}
+\caption{Row-normalised confusion matrices (\%) of the ensemble. Under the paper protocol most mass is on the
+diagonal; for unseen speakers low-arousal emotions (neutral, sad) are confused; on TESS predictions collapse onto a
+few classes.}
+\label{fig:confusion}
+\end{figure*}
+
+\subsection{H4 -- Unseen dataset}
+Cross-corpus transfer fails in both directions. Trained on RAVDESS, the ensemble reaches only \AccRTEns\% on TESS
+(chance 14.3\%) and labels \TessTopPredShare\% of all TESS clips as \emph{\TessTopPred}. Trained on TESS, it scores
+\AccTREns\% on RAVDESS, \emph{below} the 20.0\% majority baseline, and predicts \emph{\RavTopPred} for
+\RavTopPredShare\% of clips. Per-class recall on TESS (RAVDESS-trained ensemble) is:
+
+\smallskip
+\centerline{\small\input{generated/tab_tess_recall.tex}}
+\smallskip
+
+\noindent Interestingly, the Random Forest transfers best (\AccRTRf\%). Its time-pooled statistics do not depend
+on \emph{where} in the 2.5\,s window a sound occurs, whereas the paper's flattened vector ties every value to a
+fixed frame position. \textbf{H4 is supported.}
+
+\paragraph{Controlled check: zero padding.} TESS clips are short, so after the 0.6\,s offset \OffsetPadPaper\% of
+TESS frames are zero padding, against \RavPadPct\% for RAVDESS. Silent frames have near-zero energy and look like
+low-arousal speech. To test this without retraining, we re-extracted TESS with offset 0\,s
+(\OffsetPadZero\% padding) and evaluated the \emph{same} RAVDESS-trained models: accuracy rises from
+\OffsetAccPaper\% to \OffsetAccZero\% and the share of ``sad'' predictions falls from \OffsetSadPaper\% to
+\OffsetSadZero\%. Padding therefore explains part of the collapse, but even without it the model remains far below
+its within-corpus accuracy, pointing to the other differences between corpora: speakers, single words vs.\
+sentences, and recording conditions. The older TESS speaker is recognised worse (\TessAccOaf\% vs.\
+\TessAccYaf\% for the younger one).
+
+\subsection{H5 -- Gender bias check}
+Every model is more accurate for female than for male actors (Table~\ref{tab:gender}, Fig.~\ref{fig:gender}). For
+the ensemble the gap is \GenderGapEns{} points (\GenderFemaleEns\% vs.\ \GenderMaleEns\%, $p$\,\GenderPEns{} by a
+two-proportion $z$-test). Because clips of the same actor are not independent, we also compared the 24 per-actor
+accuracies: the female actors are still clearly better (Mann--Whitney $U=\GenderActorU$ of a maximum 144,
+$p=\GenderActorP$). The data are balanced (12 actors and 720 clips per gender), so this is not a sampling artefact
+of RAVDESS's composition. The gap is largest for surprised, neutral and disgust and is the only one reversed for
+happy (Table~\ref{tab:gender_emotion}). \textbf{H5 is supported}: a model deployed from this pipeline would
+systematically serve male speakers worse.
+
+\begin{table}[t]
+\centering
+\caption{Bias check, speaker-independent protocol (720 clips per gender). Gap = female $-$ male.}
+\label{tab:gender}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{\input{generated/tab_gender.tex}}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../results/figures/fig_gender_bias.pdf}
+\caption{Accuracy by speaker gender (speaker-independent CV).}
+\label{fig:gender}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Per-emotion recall (\%) of the ensemble by gender.}
+\label{tab:gender_emotion}
+\small
+\input{generated/tab_gender_emotion.tex}
+\end{table}
+
+\input{sections/ablation.tex}
+
+\subsection{Efficiency}
+The 1D-CNN has \ParamsCnn{} parameters and the CNN\_Bi-LSTM \ParamsLstm{} (ensemble \ParamsEns{}). On a 4-core CPU,
+training under the paper protocol took \FitMinCnn{} and \FitMinLstm{} minutes (\EpochsCnn{} and \EpochsLstm{}
+epochs before early stopping), and inference costs \InferMsCnn{} and \InferMsLstm{} ms per clip. The SVM trains in
+seconds and predicts in \InferMsSvm{} ms per clip, and it is only \PaperEnsOverSvm{} points behind the ensemble under the paper
+protocol, which puts the value of the deep ensemble in perspective.
+
+\section{Error Analysis and Discussion}
+\label{sec:discussion}
+\paragraph{Why the paper's protocol overestimates performance.} Emotion corpora such as RAVDESS contain a small
+number of speakers who each record the same two sentences many times. A random split therefore places recordings of
+the \emph{same actor saying the same sentence} in both training and test sets, and augmentation before the split
+adds near-copies of the \emph{same recording}. Both violate the assumption that test data are independent of
+training data. The 97\% figure measures recognition of familiar voices (or familiar recordings), not of emotion.
+
+\paragraph{Why the models fail on new speakers.} The input is a globally standardised vector of absolute feature
+values. MFCC and Chroma levels depend strongly on vocal-tract shape and fundamental frequency, i.e.\ on
+\emph{who} is speaking; nothing in the pipeline removes speaker identity, so a model can reach high within-speaker
+accuracy by learning speaker-specific baselines. For a new speaker those baselines are wrong. The dominant errors
+(\ConfOne, \ConfTwo) are between low-arousal classes whose differences are subtle relative to between-speaker
+variation. Merging RAVDESS \emph{calm} into \emph{neutral}, as the paper does, makes the neutral class more
+heterogeneous and adds to this confusion.
+
+\paragraph{Why women are recognised better.} We can only offer hypotheses: female voices typically have a higher and
+wider pitch range, which Chroma and MFCC capture, so emotional pitch changes may be more separable; and the
+augmentation (pitch shift of +0.7 semitones) never moves a voice across the male--female range. Speaker-level
+normalisation or gender-balanced model selection would be the first mitigations to test.
+
+\paragraph{Why cross-corpus transfer collapses.} Besides speakers, the corpora differ in utterance type (a full
+sentence vs.\ ``Say the word \_\_''), duration (hence padding), speaker age and recording setup. The flattened,
+position-dependent representation amplifies these differences: the same emotion expressed 0.3\,s later produces a
+different input vector. The controlled padding check shows that one of these factors alone moves accuracy by
+\OffsetGain{} points.
+
+\paragraph{Take-away.} The paper's architecture is a reasonable lightweight model: it beats classical baselines under
+every within-corpus protocol. But its reported accuracy is a property of the evaluation protocol as much as of the
+model. For deployment, the speaker-independent figure (\AccSpkEns\%) and the cross-corpus figure (near chance)
+are the relevant ones.

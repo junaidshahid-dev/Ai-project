@@ -1,0 +1,9 @@
+We re-implemented a recent lightweight SER ensemble and asked how far its near-perfect accuracy generalises. Five
+findings stand out. (1) Under a leak-free random split our implementation reaches \AccPaperEns\%, not 97.57\%.
+(2) Applying augmentation before splitting reproduces the reported level (\AccLeakyEns\%) because almost every test
+sample has a near-copy in training. (3) For unseen speakers accuracy drops to \AccSpkEns\%, still well above
+classical baselines. (4) Across corpora the model is near chance, partly because the paper's fixed offset leaves
+\OffsetPadPaper\% of TESS frames as zero padding. (5) The model is significantly less accurate for male speakers
+(\GenderGapEns{} points). For practitioners the lesson is concrete: report speaker-independent and cross-corpus
+results, split before augmenting, and check performance per demographic group before deploying an emotion
+recogniser.

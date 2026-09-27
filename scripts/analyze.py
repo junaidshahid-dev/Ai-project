@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
-from scipy.stats import norm  # noqa: E402
+from scipy.stats import mannwhitneyu, norm  # noqa: E402
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -147,6 +147,21 @@ def main():
         summary["gender_per_emotion"] = per_emo
         summary["speaker_per_actor_acc"] = {s_: float((g["pred"] == g["label"]).mean())
                                             for s_, g in d.groupby("speaker")}
+        # Actor-level test: clips of one actor are not independent, so also compare
+        # the 12 male vs 12 female per-actor accuracies (Mann-Whitney U, two-sided).
+        acts = d.groupby(["speaker", "gender"]).apply(lambda g: (g["pred"] == g["label"]).mean()).reset_index(name="acc")
+        u = mannwhitneyu(acts[acts["gender"] == "female"]["acc"], acts[acts["gender"] == "male"]["acc"],
+                         alternative="two-sided")
+        summary["gender_actor_level"] = {
+            "male_mean": float(acts[acts["gender"] == "male"]["acc"].mean()),
+            "female_mean": float(acts[acts["gender"] == "female"]["acc"].mean()),
+            "U": float(u.statistic), "p_value": float(u.pvalue)}
+        # Most frequent confusions (speaker-independent ensemble)
+        cm = confusion_matrix(d["label"], d["pred"], labels=range(len(EMOTIONS)))
+        conf = [(EMOTIONS[i], EMOTIONS[j], int(cm[i, j]), float(cm[i, j] / cm[i].sum()))
+                for i in range(len(EMOTIONS)) for j in range(len(EMOTIONS)) if i != j]
+        summary["speaker_top_confusions"] = sorted(conf, key=lambda t: -t[3])[:5]
+        summary["speaker_recall"] = {EMOTIONS[i]: float(cm[i, i] / cm[i].sum()) for i in range(len(EMOTIONS))}
 
     if "ravdess_to_tess" in have:
         x = main_p[(main_p["experiment"] == "ravdess_to_tess") & (main_p["model"] == "Ensemble")]
@@ -187,12 +202,12 @@ def main():
         for i, v in enumerate(100 * c["acc"]):
             ax.text(v + 2, i, f"{v:.1f}", va="center", fontsize=7, color=INK)
         ax.set_yticks(range(len(MODELS)), [LABELS[m] for m in MODELS])
-        ax.invert_yaxis()
         ax.set_xlim(0, 118)
         ax.set_xticks([0, 50, 100])
         ax.set_title(title, fontsize=8.5, color=INK)
         ax.set_xlabel("Accuracy (%)")
         ax.grid(axis="y", visible=False)
+    axes[0][0].invert_yaxis()  # shared y-axis: invert once, not per panel
     save(fig, "fig_model_comparison")
 
     cm_panels = [(e, t) for e, t in EXPERIMENTS if e in have and e in ("paper", "speaker", "ravdess_to_tess")]
@@ -209,9 +224,10 @@ def main():
         ax.set_xticks(range(len(EMOTIONS)), short, fontsize=7)
         ax.set_yticks(range(len(EMOTIONS)), short, fontsize=7)
         ax.set_xlabel("Predicted")
-        ax.set_ylabel("True")
         ax.set_title(title, fontsize=8.5)
         ax.grid(False)
+    axes[0][0].set_ylabel("True")
+    fig.tight_layout(w_pad=1.5)
     save(fig, "fig_confusion")
 
     if len(bias):

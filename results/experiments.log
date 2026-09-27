@@ -35,3 +35,5 @@ ravdess_to_tess done
 tess_to_ravdess done
 saved cross
 === ablation ===
+  CNN: 18 epochs, 11.1 min
+ablation no_zcr done
