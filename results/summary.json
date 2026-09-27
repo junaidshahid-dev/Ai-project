@@ -1,0 +1,381 @@
+{
+  "model_comparison": [
+    {
+      "experiment": "paper",
+      "model": "Majority",
+      "acc": 0.2013888888888889,
+      "f1_macro": 0.04789430222956235,
+      "f1_weighted": 0.06751766217084136,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "paper",
+      "model": "SVM",
+      "acc": 0.7708333333333334,
+      "f1_macro": 0.7670550001377068,
+      "f1_weighted": 0.7694985326564274,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "paper",
+      "model": "RandomForest",
+      "acc": 0.6944444444444444,
+      "f1_macro": 0.6798691293155633,
+      "f1_weighted": 0.6838661773424707,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "paper",
+      "model": "CNN",
+      "acc": 0.7916666666666666,
+      "f1_macro": 0.7860668675381406,
+      "f1_weighted": 0.7904269690729663,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "paper",
+      "model": "CNN_BiLSTM",
+      "acc": 0.8125,
+      "f1_macro": 0.8063104189044038,
+      "f1_weighted": 0.8114335317460317,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "paper",
+      "model": "Ensemble",
+      "acc": 0.8194444444444444,
+      "f1_macro": 0.8144966809500996,
+      "f1_weighted": 0.8193842249553298,
+      "n": 144,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "Majority",
+      "acc": 0.1996527777777778,
+      "f1_macro": 0.047550134380814554,
+      "f1_weighted": 0.06645461488985367,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "SVM",
+      "acc": 0.8559027777777778,
+      "f1_macro": 0.8537683730030375,
+      "f1_weighted": 0.8556809264129035,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "RandomForest",
+      "acc": 0.7152777777777778,
+      "f1_macro": 0.7053358454862749,
+      "f1_weighted": 0.7070934388905956,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "CNN",
+      "acc": 0.9565972222222222,
+      "f1_macro": 0.9569234102229286,
+      "f1_weighted": 0.956454874776064,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "CNN_BiLSTM",
+      "acc": 0.9444444444444444,
+      "f1_macro": 0.9451795324756239,
+      "f1_weighted": 0.9443729690125936,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "leaky",
+      "model": "Ensemble",
+      "acc": 0.9652777777777778,
+      "f1_macro": 0.9662050322688687,
+      "f1_weighted": 0.9653326681719135,
+      "n": 576,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "speaker",
+      "model": "Majority",
+      "acc": 0.2,
+      "f1_macro": 0.047619047619047616,
+      "f1_weighted": 0.06666666666666667,
+      "n": 1440,
+      "acc_fold_mean": 0.2,
+      "acc_fold_std": 0.0
+    },
+    {
+      "experiment": "speaker",
+      "model": "SVM",
+      "acc": 0.4909722222222222,
+      "f1_macro": 0.4878125857634307,
+      "f1_weighted": 0.4923864289434043,
+      "n": 1440,
+      "acc_fold_mean": 0.4909722222222222,
+      "acc_fold_std": 0.042508849841119134
+    },
+    {
+      "experiment": "speaker",
+      "model": "RandomForest",
+      "acc": 0.46805555555555556,
+      "f1_macro": 0.43328817499882394,
+      "f1_weighted": 0.44557876725380424,
+      "n": 1440,
+      "acc_fold_mean": 0.46805555555555556,
+      "acc_fold_std": 0.02638888888888888
+    },
+    {
+      "experiment": "speaker",
+      "model": "CNN",
+      "acc": 0.5666666666666667,
+      "f1_macro": 0.5597076263001898,
+      "f1_weighted": 0.5660679613232735,
+      "n": 1440,
+      "acc_fold_mean": 0.5666666666666667,
+      "acc_fold_std": 0.019934305686676847
+    },
+    {
+      "experiment": "speaker",
+      "model": "CNN_BiLSTM",
+      "acc": 0.5652777777777778,
+      "f1_macro": 0.5618687940919328,
+      "f1_weighted": 0.5643864991049385,
+      "n": 1440,
+      "acc_fold_mean": 0.5652777777777778,
+      "acc_fold_std": 0.029034090222731745
+    },
+    {
+      "experiment": "speaker",
+      "model": "Ensemble",
+      "acc": 0.5847222222222223,
+      "f1_macro": 0.5777944755144835,
+      "f1_weighted": 0.5822481306892437,
+      "n": 1440,
+      "acc_fold_mean": 0.5847222222222223,
+      "acc_fold_std": 0.01909406539564931
+    }
+  ],
+  "replication": [
+    {
+      "model": "CNN",
+      "reported_acc": 96.18,
+      "reported_f1w": 96.22,
+      "ours_paper_acc": 79.16666666666666,
+      "ours_paper_f1w": 79.04269690729663,
+      "ours_leaky_acc": 95.65972222222221,
+      "ours_leaky_f1w": 95.6454874776064
+    },
+    {
+      "model": "CNN_BiLSTM",
+      "reported_acc": 97.57,
+      "reported_f1w": 97.29,
+      "ours_paper_acc": 81.25,
+      "ours_paper_f1w": 81.14335317460318,
+      "ours_leaky_acc": 94.44444444444444,
+      "ours_leaky_f1w": 94.43729690125936
+    },
+    {
+      "model": "Ensemble",
+      "reported_acc": 97.57,
+      "reported_f1w": 97.56,
+      "ours_paper_acc": 81.94444444444444,
+      "ours_paper_f1w": 81.93842249553298,
+      "ours_leaky_acc": 96.52777777777779,
+      "ours_leaky_f1w": 96.53326681719136
+    }
+  ],
+  "leaky_by_augmentation": {
+    "noise": 0.9583333333333334,
+    "noise_pitch": 0.9559748427672956,
+    "original": 0.9779411764705882,
+    "pitch": 0.9708029197080292
+  },
+  "leaky_overlap": {
+    "test_samples_with_a_copy_in_train": 0.9913194444444444
+  },
+  "efficiency": [
+    {
+      "model": "Majority",
+      "params": NaN,
+      "fit_s": 0.0005946159362792,
+      "infer_ms": 0.0003592835532294,
+      "epochs": NaN
+    },
+    {
+      "model": "SVM",
+      "params": NaN,
+      "fit_s": 4.2542805671691895,
+      "infer_ms": 0.256376134024726,
+      "epochs": NaN
+    },
+    {
+      "model": "RandomForest",
+      "params": NaN,
+      "fit_s": 1.970224380493164,
+      "infer_ms": 0.6657176547580295,
+      "epochs": NaN
+    },
+    {
+      "model": "CNN",
+      "params": 616615.0,
+      "fit_s": 633.0157995223999,
+      "infer_ms": 2.695050504472521,
+      "epochs": 21.0
+    },
+    {
+      "model": "CNN_BiLSTM",
+      "params": 688807.0,
+      "fit_s": 786.6459450721741,
+      "infer_ms": 4.135186473528544,
+      "epochs": 23.0
+    },
+    {
+      "model": "Ensemble",
+      "params": 1305422.0,
+      "fit_s": NaN,
+      "infer_ms": NaN,
+      "epochs": NaN
+    }
+  ],
+  "gender_bias": [
+    {
+      "model": "SVM",
+      "acc_male": 0.4527777777777778,
+      "acc_female": 0.5291666666666667,
+      "f1_male": 0.44692694449480347,
+      "f1_female": 0.5272841017776126,
+      "gap_pp": 7.638888888888889,
+      "z": -2.899227138840553,
+      "p_value": 0.003740837880819692
+    },
+    {
+      "model": "RandomForest",
+      "acc_male": 0.4097222222222222,
+      "acc_female": 0.5263888888888889,
+      "f1_male": 0.37161378309930754,
+      "f1_female": 0.4941302856524009,
+      "gap_pp": 11.66666666666667,
+      "z": -4.436251906804107,
+      "p_value": 9.153872192246837e-06
+    },
+    {
+      "model": "CNN",
+      "acc_male": 0.49444444444444446,
+      "acc_female": 0.6388888888888888,
+      "f1_male": 0.4877615214948822,
+      "f1_female": 0.6301779462067165,
+      "gap_pp": 14.444444444444438,
+      "z": -5.5306631875497185,
+      "p_value": 3.190223551996496e-08
+    },
+    {
+      "model": "CNN_BiLSTM",
+      "acc_male": 0.4722222222222222,
+      "acc_female": 0.6583333333333333,
+      "f1_male": 0.4739469982993355,
+      "f1_female": 0.6487622217099125,
+      "gap_pp": 18.61111111111111,
+      "z": -7.1233892305036655,
+      "p_value": 1.0531575611594235e-12
+    },
+    {
+      "model": "Ensemble",
+      "acc_male": 0.5069444444444444,
+      "acc_female": 0.6625,
+      "f1_male": 0.5031548283630972,
+      "f1_female": 0.6513086611789032,
+      "gap_pp": 15.555555555555555,
+      "z": -5.98952843398724,
+      "p_value": 2.1045034603872637e-09
+    }
+  ],
+  "gender_per_emotion": [
+    {
+      "emotion": "neutral",
+      "recall_male": 0.5416666666666666,
+      "recall_female": 0.7430555555555556
+    },
+    {
+      "emotion": "happy",
+      "recall_male": 0.5416666666666666,
+      "recall_female": 0.5208333333333334
+    },
+    {
+      "emotion": "sad",
+      "recall_male": 0.3020833333333333,
+      "recall_female": 0.3854166666666667
+    },
+    {
+      "emotion": "angry",
+      "recall_male": 0.6770833333333334,
+      "recall_female": 0.7916666666666666
+    },
+    {
+      "emotion": "fearful",
+      "recall_male": 0.4375,
+      "recall_female": 0.6145833333333334
+    },
+    {
+      "emotion": "disgust",
+      "recall_male": 0.5104166666666666,
+      "recall_female": 0.7083333333333334
+    },
+    {
+      "emotion": "surprised",
+      "recall_male": 0.5208333333333334,
+      "recall_female": 0.8333333333333334
+    }
+  ],
+  "speaker_per_actor_acc": {
+    "R01": 0.5,
+    "R02": 0.7833333333333333,
+    "R03": 0.5333333333333333,
+    "R04": 0.5833333333333334,
+    "R05": 0.5,
+    "R06": 0.65,
+    "R07": 0.48333333333333334,
+    "R08": 0.8166666666666667,
+    "R09": 0.4,
+    "R10": 0.5166666666666667,
+    "R11": 0.7,
+    "R12": 0.7333333333333333,
+    "R13": 0.55,
+    "R14": 0.6833333333333333,
+    "R15": 0.4666666666666667,
+    "R16": 0.5666666666666667,
+    "R17": 0.4,
+    "R18": 0.6666666666666666,
+    "R19": 0.5166666666666667,
+    "R20": 0.6666666666666666,
+    "R21": 0.6333333333333333,
+    "R22": 0.65,
+    "R23": 0.4,
+    "R24": 0.6333333333333333
+  }
+}

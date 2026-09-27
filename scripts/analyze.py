@@ -221,7 +221,7 @@ def main():
         ax.invert_yaxis()
         ax.set_xlim(0, 100)
         ax.set_xlabel("Accuracy (%), speaker-independent CV")
-        ax.legend(frameon=False, loc="lower right", fontsize=8)
+        ax.legend(frameon=False, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize=8)
         ax.grid(axis="y", visible=False)
         save(fig, "fig_gender_bias")
 

@@ -20,3 +20,10 @@ speaker fold 0 done
   CNN_BiLSTM: 24 epochs, 11.7 min
 speaker fold 1 done
   CNN: 27 epochs, 11.9 min
+  CNN_BiLSTM: 23 epochs, 10.7 min
+speaker fold 2 done
+  CNN: 23 epochs, 9.3 min
+  CNN_BiLSTM: 18 epochs, 8.8 min
+speaker fold 3 done
+saved speaker
+=== cross ===
