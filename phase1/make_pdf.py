@@ -4,7 +4,7 @@ from reportlab.lib.units import cm
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, ListFlowable, ListItem
 
-OUT = "/home/user/Ai-project/phase1/F26-GroupID.pdf"
+OUT = "/home/user/Ai-project/phase1/F26-11.pdf"
 
 ss = getSampleStyleSheet()
 body = ParagraphStyle("b", parent=ss["BodyText"], fontName="Times-Roman", fontSize=11, leading=14.5, spaceAfter=4)
@@ -30,7 +30,7 @@ story = [
 ]
 
 info = [
-    [Paragraph("<b>Group ID</b>", cell), Paragraph("F26-____", cell),
+    [Paragraph("<b>Group ID</b>", cell), Paragraph("F26-11", cell),
      Paragraph("<b>Track</b>", cell), Paragraph("B – Research &amp; Development", cell)],
     [Paragraph("<b>Members</b>", cell), Paragraph("22L-7786 (Lead)<br/>23L-3002", cell),
      Paragraph("<b>Instructor</b>", cell), Paragraph("Hajra Waheed", cell)],
