@@ -27,3 +27,11 @@ speaker fold 2 done
 speaker fold 3 done
 saved speaker
 === cross ===
+  CNN: 14 epochs, 7.4 min
+  CNN_BiLSTM: 16 epochs, 9.9 min
+ravdess_to_tess done
+  CNN: 10 epochs, 11.0 min
+  CNN_BiLSTM: 9 epochs, 11.0 min
+tess_to_ravdess done
+saved cross
+=== ablation ===

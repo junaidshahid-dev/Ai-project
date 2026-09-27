@@ -179,6 +179,126 @@
       "n": 1440,
       "acc_fold_mean": 0.5847222222222223,
       "acc_fold_std": 0.01909406539564931
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "Majority",
+      "acc": 0.14285714285714285,
+      "f1_macro": 0.03571428571428571,
+      "f1_weighted": 0.03571428571428571,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "SVM",
+      "acc": 0.2392857142857143,
+      "f1_macro": 0.17174819679918069,
+      "f1_weighted": 0.17174819679918066,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "RandomForest",
+      "acc": 0.31107142857142855,
+      "f1_macro": 0.2381226192119899,
+      "f1_weighted": 0.2381226192119899,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "CNN",
+      "acc": 0.1775,
+      "f1_macro": 0.14266235627441987,
+      "f1_weighted": 0.1426623562744199,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "CNN_BiLSTM",
+      "acc": 0.17892857142857144,
+      "f1_macro": 0.17130546103692088,
+      "f1_weighted": 0.17130546103692088,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "ravdess_to_tess",
+      "model": "Ensemble",
+      "acc": 0.19714285714285715,
+      "f1_macro": 0.16986693573753003,
+      "f1_weighted": 0.16986693573753003,
+      "n": 2800,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "Majority",
+      "acc": 0.2,
+      "f1_macro": 0.047619047619047616,
+      "f1_weighted": 0.06666666666666667,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "SVM",
+      "acc": 0.1361111111111111,
+      "f1_macro": 0.07691781706160986,
+      "f1_weighted": 0.07950601197355193,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "RandomForest",
+      "acc": 0.14375,
+      "f1_macro": 0.05558384956692482,
+      "f1_weighted": 0.05187825959579649,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "CNN",
+      "acc": 0.14097222222222222,
+      "f1_macro": 0.06628400014643401,
+      "f1_weighted": 0.061865066803338406,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "CNN_BiLSTM",
+      "acc": 0.1361111111111111,
+      "f1_macro": 0.039622093031139456,
+      "f1_weighted": 0.03698062016239683,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
+    },
+    {
+      "experiment": "tess_to_ravdess",
+      "model": "Ensemble",
+      "acc": 0.14097222222222222,
+      "f1_macro": 0.06628400014643401,
+      "f1_weighted": 0.061865066803338406,
+      "n": 1440,
+      "acc_fold_mean": NaN,
+      "acc_fold_std": NaN
     }
   ],
   "replication": [
@@ -377,5 +497,50 @@
     "R22": 0.65,
     "R23": 0.4,
     "R24": 0.6333333333333333
+  },
+  "tess_per_speaker": {
+    "OAF": 0.155,
+    "YAF": 0.2392857142857143
+  },
+  "tess_pred_distribution": {
+    "sad": 0.5310714285714285,
+    "fearful": 0.18285714285714286,
+    "angry": 0.14892857142857144,
+    "disgust": 0.07178571428571429,
+    "happy": 0.033928571428571426,
+    "neutral": 0.022857142857142857,
+    "surprised": 0.008571428571428572
+  },
+  "tess_per_emotion_recall": {
+    "angry": 0.37,
+    "disgust": 0.2925,
+    "fearful": 0.2025,
+    "happy": 0.0075,
+    "neutral": 0.0025,
+    "sad": 0.485,
+    "surprised": 0.02
+  },
+  "tess_sad_rate_by_padding": {
+    "<30%": {
+      "n": 576,
+      "pred_sad": 0.5347222222222222,
+      "acc": 0.5260416666666666
+    },
+    "30-45%": {
+      "n": 1120,
+      "pred_sad": 0.4473214285714286,
+      "acc": 0.12857142857142856
+    },
+    ">45%": {
+      "n": 1104,
+      "pred_sad": 0.6141304347826086,
+      "acc": 0.09510869565217392
+    }
+  },
+  "tess_padding_mean": 0.41509259259259257,
+  "rav_pred_distribution": {
+    "fearful": 0.8791666666666667,
+    "angry": 0.11944444444444445,
+    "sad": 0.001388888888888889
   }
 }
