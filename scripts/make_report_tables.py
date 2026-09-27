@@ -63,7 +63,8 @@ def main():
             if c == "speaker":
                 acc += f"\\,$\\pm$\\,{pct(r['acc_fold_std'])}"
             cell = f"{acc} / {pct(r['f1_macro'])}"
-            if abs(r["acc"] - best[c]) < 1e-12 and m != "Majority":
+            majority = comp[(comp["experiment"] == c) & (comp["model"] == "Majority")]["acc"].iloc[0]
+            if abs(r["acc"] - best[c]) < 1e-12 and m != "Majority" and r["acc"] > majority:
                 cell = f"\\textbf{{{cell}}}"
             cells.append(cell)
         if m == "CNN":
@@ -124,6 +125,21 @@ def main():
         mac("ActorMin", min(acts, key=acts.get).replace("R", "Actor~"))
         mac("ActorMax", max(acts, key=acts.get).replace("R", "Actor~"))
 
+    if "gender_actor_level" in s:
+        ga = s["gender_actor_level"]
+        mac("GenderActorU", f"{ga['U']:.0f}")
+        mac("GenderActorP", f"{ga['p_value']:.3f}")
+        c = s["speaker_top_confusions"]
+        for i, (a, b, _, share) in enumerate(c[:3]):
+            name = ["One", "Two", "Three"][i]
+            mac(f"Conf{name}", f"{a}$\\to${b}")
+            mac(f"Conf{name}Pct", pct(share))
+        rec = s["speaker_recall"]
+        mac("SpkRecallMin", pct(min(rec.values())))
+        mac("SpkRecallMinName", min(rec, key=rec.get))
+        mac("SpkRecallMax", pct(max(rec.values())))
+        mac("SpkRecallMaxName", max(rec, key=rec.get))
+
     # Cross-dataset details
     if "tess_per_speaker" in s:
         for spk, v in s["tess_per_speaker"].items():
@@ -137,6 +153,21 @@ def main():
                  " & ".join(e[:3].capitalize() + "." for e in rec) + " \\\\", "\\midrule",
                  " & ".join(pct(v) for v in rec.values()) + " \\\\", "\\bottomrule", "\\end{tabular}"]
         (OUT / "tab_tess_recall.tex").write_text("\n".join(lines) + "\n")
+
+    if "tess_offset_check" in s:
+        oc = s["tess_offset_check"]
+        mac("OffsetAccPaper", pct(oc["offset_0.6"]["acc"]))
+        mac("OffsetAccZero", pct(oc["offset_0.0"]["acc"]))
+        mac("OffsetFoneZero", pct(oc["offset_0.0"]["f1_macro"]))
+        mac("OffsetPadPaper", pct(oc["offset_0.6"]["padded_frames"], 0))
+        mac("OffsetPadZero", pct(oc["offset_0.0"]["padded_frames"], 0))
+        mac("OffsetSadPaper", pct(oc["offset_0.6"]["pred_sad_share"], 0))
+        mac("OffsetSadZero", pct(oc["offset_0.0"]["pred_sad_share"], 0))
+    if "rav_pred_distribution" in s:
+        dist = s["rav_pred_distribution"]
+        top = max(dist, key=dist.get)
+        mac("RavTopPred", top)
+        mac("RavTopPredShare", pct(dist[top]))
 
     # Ablation
     if "ablation" in s:
@@ -175,6 +206,20 @@ def main():
             mac(f"InferMs{k}", f"{r['infer_ms']:.2f}")
         if pd.notna(r.get("epochs")):
             mac(f"Epochs{k}", f"{int(r['epochs'])}")
+
+    # Differences quoted in the text (computed, never typed by hand)
+    def acc(exp, model):
+        return comp[(comp["experiment"] == exp) & (comp["model"] == model)]["acc"].iloc[0]
+    mac("LeakGainEns", f"{100 * (acc('leaky', 'Ensemble') - acc('paper', 'Ensemble')):.1f}")
+    mac("LeakGainSvm", f"{100 * (acc('leaky', 'SVM') - acc('paper', 'SVM')):.1f}")
+    mac("ReportedGapEns", f"{97.57 - 100 * acc('paper', 'Ensemble'):.1f}")
+    if "speaker" in set(comp["experiment"]):
+        mac("SpkDropEns", f"{100 * (acc('paper', 'Ensemble') - acc('speaker', 'Ensemble')):.1f}")
+        mac("SpkEnsOverSvm", f"{100 * (acc('speaker', 'Ensemble') - acc('speaker', 'SVM')):.1f}")
+    mac("PaperEnsOverSvm", f"{100 * (acc('paper', 'Ensemble') - acc('paper', 'SVM')):.1f}")
+    if "tess_offset_check" in s:
+        oc = s["tess_offset_check"]
+        mac("OffsetGain", f"{100 * (oc['offset_0.0']['acc'] - oc['offset_0.6']['acc']):.1f}")
 
     # Compute budget and input statistics quoted in the text
     runs = pd.concat([pd.read_csv(p) for p in sorted((ROOT / "results").glob("runs_*.csv"))])

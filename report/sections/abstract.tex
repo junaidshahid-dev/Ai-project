@@ -1,0 +1,13 @@
+\begin{abstract}
+Chowdhury et al.\ (\emph{Scientific Reports}, 2025) report 97.57\% accuracy on RAVDESS and 100\% on TESS for a
+lightweight averaging ensemble of a 1D-CNN and a CNN\_Bi-LSTM trained on hand-crafted features (ZCR, RMSE, MFCC,
+Chroma STFT). We re-implement the pipeline from the paper's specification and stress-test it with four evaluation
+protocols, classical baselines, a gender-bias check and a feature ablation. With augmentation applied only to
+training clips, the ensemble reaches \AccPaperEns\%; applying augmentation \emph{before} the train--test split, so that
+\LeakyOverlap\% of test samples have an augmented copy in training, reproduces the paper's level (\AccLeakyEns\%).
+For speakers never seen in training, accuracy falls to \AccSpkEns\,$\pm$\,\AccStdSpkEns\%, and across corpora it is
+near chance (\AccRTEns\% RAVDESS$\to$TESS, \AccTREns\% TESS$\to$RAVDESS). All models are significantly more accurate
+for female than male actors (ensemble \GenderFemaleEns\% vs.\ \GenderMaleEns\%, $p<0.001$; actor-level
+$p=\GenderActorP$). The architecture is a sound lightweight model, but its headline accuracy depends on the
+evaluation protocol; speaker-independent and cross-corpus evaluation should be the standard for reporting SER results.
+\end{abstract}

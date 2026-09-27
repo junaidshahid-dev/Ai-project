@@ -43,6 +43,7 @@ TESS is perfectly balanced (400 per class).
 \section{Methodology}
 \begin{figure*}[t]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[node distance=0.35cm, font=\footnotesize,
   box/.style={draw, rounded corners=2pt, align=center, minimum height=0.95cm, inner sep=3pt, fill=gray!6},
   hl/.style={box, fill=blue!8, draw=blue!50!black},
@@ -63,7 +64,7 @@ TESS is perfectly balanced (400 per class).
 \node[box, below=0.55cm of feat, fill=white, dashed] (pool) {mean + std over time\\(68 values)};
 \node[box, right=of pool, fill=white, dashed] (base) {Baselines: Majority,\\SVM (RBF), Random Forest};
 \draw[arr, dashed] (feat) -- (pool); \draw[arr, dashed] (pool) -- (base);
-\end{tikzpicture}
+\end{tikzpicture}}
 \caption{Pipeline. Blue boxes follow the paper~\cite{chowdhury2025}; dashed boxes are our classical baselines, which use
 the same frame features summarised over time.}
 \label{fig:pipeline}
