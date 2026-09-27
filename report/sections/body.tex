@@ -1,0 +1,150 @@
+\section{Introduction}
+Speech emotion recognition (SER) classifies a speaker's emotional state from the voice alone and is used in
+call-centre analytics, health screening and conversational agents. Chowdhury et al.~\cite{chowdhury2025}
+recently showed that a \emph{lightweight} ensemble of a 1D-CNN and a CNN\_Bi-LSTM, trained on four classical
+hand-crafted features (ZCR, RMSE, MFCC and Chroma STFT), reaches 97.57\% accuracy on RAVDESS and 100\% on TESS,
+outperforming heavier spectrogram-based models. Such numbers are attractive for low-resource deployment, but they
+were obtained by training and testing on random splits of the \emph{same} dataset, the paper does not state whether
+augmentation was applied before or after splitting, and the authors themselves list cross-dataset validation as
+future work~\cite[Sec.~7]{chowdhury2025}.
+
+\paragraph{Research question.} \emph{Does the near-perfect accuracy of this lightweight model reflect emotion
+recognition that transfers to new clips, new speakers and new recording conditions, and is it equally accurate for
+male and female speakers?} We re-implement the full pipeline from the paper's specification and test six hypotheses:
+\begin{enumerate}[label=\textbf{H\arabic*}]
+  \item \textbf{Replication:} under the paper's protocol our implementation approaches the reported RAVDESS accuracy.
+  \item \textbf{Split order:} augmenting \emph{before} splitting inflates accuracy, because augmented copies of a
+        test clip then appear in training.
+  \item \textbf{Unseen speakers:} accuracy drops substantially when test actors are never seen in training.
+  \item \textbf{Unseen dataset:} accuracy collapses when training on RAVDESS and testing on TESS (and vice versa).
+  \item \textbf{Gender bias:} speaker-independent accuracy differs between male and female actors.
+  \item \textbf{Features:} MFCC carries most of the information; Chroma adds a smaller but positive contribution,
+        as the paper's LIME analysis suggests.
+\end{enumerate}
+
+\paragraph{Contributions.} (i) An open, reproducible re-implementation of the paper's features, augmentation,
+architectures and training schedule; (ii) a controlled comparison of four evaluation protocols of increasing
+strictness, with classical baselines; (iii) the gender-bias check required by the course; (iv) a feature and
+augmentation ablation; (v) an error analysis explaining \emph{why} performance changes between protocols.
+
+\section{Data}
+We use the two Kaggle datasets used by the paper~\cite{kaggleravdess,kaggletess}.
+\textbf{RAVDESS}~\cite{livingstone2018}: 1,440 speech clips (16-bit, 48\,kHz) from 24 professional actors
+(12 male, 12 female, odd IDs male) speaking two fixed sentences in eight emotions at two intensities.
+\textbf{TESS}~\cite{tess2020}: 2,800 clips (24.4\,kHz) of the carrier phrase ``Say the word \_\_'' with 200 target
+words, spoken by two female actors aged 26 (YAF) and 64 (OAF) in seven emotions. Both Kaggle copies contain
+duplicated folders; our loader de-duplicates by filename to avoid train--test overlap.
+
+Following the paper's Table~1 (288 neutral RAVDESS clips), RAVDESS \emph{calm} is merged into \emph{neutral}, and TESS
+\emph{pleasant surprise} is mapped to \emph{surprised}, giving one 7-class label set for both corpora:
+neutral, happy, sad, angry, fearful, disgust, surprised. RAVDESS is balanced except neutral (288 vs.\ 192 per class);
+TESS is perfectly balanced (400 per class).
+
+\section{Methodology}
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[node distance=0.35cm, font=\footnotesize,
+  box/.style={draw, rounded corners=2pt, align=center, minimum height=0.95cm, inner sep=3pt, fill=gray!6},
+  hl/.style={box, fill=blue!8, draw=blue!50!black},
+  arr/.style={-{Stealth[length=2mm]}, thick}]
+\node[box] (wav) {Audio clip\\22{,}050\,Hz};
+\node[box, right=of wav] (crop) {Load 2.5\,s\\from 0.6\,s};
+\node[hl, right=of crop] (aug) {Augment (train)\\original, noise,\\pitch, noise+pitch};
+\node[box, right=of aug] (feat) {Per frame (108):\\ZCR, RMSE,\\MFCC$_{20}$, Chroma$_{12}$};
+\node[box, right=of feat] (flat) {Flatten\\3{,}672 values\\+ standardise};
+\node[hl, right=1.2cm of flat, yshift=0.65cm] (cnn) {1D-CNN\\(5 conv blocks)};
+\node[hl, right=1.2cm of flat, yshift=-0.65cm] (lstm) {CNN\_Bi-LSTM\\(+ Bi-LSTM 2$\times$64)};
+\node[box, right=0.9cm of flat, xshift=3.2cm] (avg) {Average\\probabilities};
+\node[box, right=of avg] (out) {7 emotions};
+\draw[arr] (wav) -- (crop); \draw[arr] (crop) -- (aug); \draw[arr] (aug) -- (feat); \draw[arr] (feat) -- (flat);
+\draw[arr] (flat.east) -- ++(0.35,0) |- (cnn.west); \draw[arr] (flat.east) -- ++(0.35,0) |- (lstm.west);
+\draw[arr] (cnn.east) -| ([xshift=-0.3cm]avg.west) -- (avg.west); \draw[arr] (lstm.east) -| ([xshift=-0.3cm]avg.west) -- (avg.west);
+\draw[arr] (avg) -- (out);
+\node[box, below=0.55cm of feat, fill=white, dashed] (pool) {mean + std over time\\(68 values)};
+\node[box, right=of pool, fill=white, dashed] (base) {Baselines: Majority,\\SVM (RBF), Random Forest};
+\draw[arr, dashed] (feat) -- (pool); \draw[arr, dashed] (pool) -- (base);
+\end{tikzpicture}
+\caption{Pipeline. Blue boxes follow the paper~\cite{chowdhury2025}; dashed boxes are our classical baselines, which use
+the same frame features summarised over time.}
+\label{fig:pipeline}
+\end{figure*}
+
+\subsection{Features and augmentation}
+All settings follow the paper's Section~4 (Fig.~\ref{fig:pipeline}). Audio is resampled to 22,050\,Hz and 2.5\,s are
+loaded from an offset of 0.6\,s. With a 2,048-sample frame and 512-sample hop this gives 108 frames. Per frame we
+compute ZCR (1), RMSE (1), 20 MFCCs and 12 Chroma STFT bins (librosa~\cite{mcfee2015librosa}); clips shorter than
+2.5\,s are zero-filled, as in the paper (``null values were replaced with zeroes''). Features are flattened and
+concatenated into the paper's 3,672-dimensional vector ($108 \times 34$) and standardised per dimension with
+training-set statistics. Each training clip contributes four versions, exactly as in the paper: the original,
+Gaussian noise with amplitude $\alpha\!=\!0.035\cdot u\cdot\max|x|$ ($u\sim U(0,1)$), a pitch shift of 0.7
+semitones, and noise followed by pitch shift. Validation and test clips are never augmented, except in the
+deliberately leaky protocol below.
+
+\subsection{Models}
+\textbf{Paper models.} We implement the paper's Table~2 architecture in Keras~\cite{abadi2015tensorflow}: five
+convolution blocks (Conv1D $\to$ BatchNorm $\to$ MaxPool/2) with 128, 128, 64, 64 and 32 filters, kernel sizes 5, 5,
+5, 3, 3, ReLU, ``same'' padding, and 20\% dropout after blocks 2, 4 and 5; then Flatten, Dense(128, ReLU),
+BatchNorm and a 7-way softmax. CNN\_Bi-LSTM inserts a bidirectional LSTM (64 units per direction, full sequence)
+before block 5. The \textbf{averaging ensemble} is the mean of the two models' class probabilities, which is what
+the paper's Average layer computes at inference. Our CNN\_Bi-LSTM has \ParamsLstm{} parameters versus 672,423 in the
+paper's Table~2; the small difference comes from the last convolution, whose parameter count in the paper
+(6,176) implies 64 input channels although the Bi-LSTM listed before it outputs 128.
+
+\textbf{Training (paper Table~3).} Adam (learning rate $10^{-3}$), cross-entropy, batch size 64, up to 100 epochs,
+early stopping on validation accuracy (patience 5, best weights restored), and learning-rate halving on a
+validation-accuracy plateau (patience 3, minimum $10^{-5}$). All random seeds are fixed to 42.
+
+\textbf{Baselines} (scikit-learn~\cite{pedregosa2011sklearn}) use the mean and standard deviation of each frame
+feature over time (68 values): a majority-class predictor (chance level), an RBF SVM ($C\!=\!10$) and a 300-tree
+Random Forest. They are trained on exactly the same (augmented) training clips as the deep models.
+
+\subsection{Evaluation protocols}
+\begin{enumerate}[label=\textbf{P\arabic*}]
+  \item \textbf{Paper protocol} (H1): stratified random 80/10/10 split of the 1,440 RAVDESS clips;
+        augmentation applied to the 1,152 training clips only (4,608 training samples, as in the paper).
+  \item \textbf{Augment-before-split} (H2): all 5,760 augmented samples are pooled and then split 80/10/10 at random,
+        so a test clip's augmented copies can be in the training set.
+  \item \textbf{Speaker-independent} (H3, H5): 4-fold cross-validation in which each fold holds out six
+        actors (three male, three female): actors 1--6, 7--12, 13--18, 19--24. Every clip is tested exactly once
+        by a model that never heard that speaker; 10\% of the training clips are held out for early stopping.
+  \item \textbf{Cross-dataset} (H4): train on all of RAVDESS and test on all of TESS, and the reverse. No target
+        data is used for training, early stopping or normalisation.
+\end{enumerate}
+The ablation (H6) retrains the 1D-CNN and SVM under P1 with one feature group removed, with MFCC only, and
+without augmentation. We report accuracy, macro-F1 (robust to RAVDESS's larger neutral class) and, for comparison
+with the paper, weighted F1. The \textbf{bias check} compares accuracy on the 12 male versus the 12 female RAVDESS
+actors under P3 with a two-proportion $z$-test ($n\!=\!720$ clips per group).
+
+\input{sections/results.tex}
+
+\section{Challenges Faced}
+\begin{itemize}
+  \item \textbf{Under-specified details.} The paper does not state whether augmentation precedes the split, how
+        the ensemble is trained, or which label is used for RAVDESS \emph{calm}. We inferred the latter from its
+        Table~1, trained the members separately and averaged them, and made the split order an explicit experiment (P2).
+  \item \textbf{Inconsistent parameter table.} The paper's Table~2 lists 6,176 parameters for the last
+        convolution, which does not match a 128-channel Bi-LSTM output; we followed the layer description.
+  \item \textbf{Compute.} Convolving a 3,672-step input with 128 filters is expensive on a CPU: one epoch takes
+        about 30\,s for the 1D-CNN and longer for the Bi-LSTM variant, so the \NumTrainings{} training runs of this
+        study took roughly \ComputeHours{} hours. We therefore ran the ablation on one split rather than four folds.
+  \item \textbf{Dataset access and duplicates.} Both Kaggle datasets ship duplicated folders; without
+        de-duplication identical files would appear in both training and test sets.
+  \item \textbf{Different clip lengths.} TESS clips are about 2\,s long, so after the paper's 0.6\,s offset
+        \TessPadPct\% of TESS frames are zero padding versus none for RAVDESS, an input shift that matters for
+        cross-dataset transfer (Sec.~\ref{sec:discussion}).
+\end{itemize}
+
+\section{Limitations and Future Work}
+Both corpora contain acted, scripted North-American English speech, so even our strictest protocols overestimate
+performance on spontaneous speech. TESS has only two female speakers, so the reverse cross-dataset direction trains
+on two voices, and the gender analysis is restricted to RAVDESS. We used one random seed per configuration; fold-level
+standard deviations indicate variance across speakers but not across initialisations. Natural next steps are
+speaker-level feature normalisation, domain-adversarial training, multi-corpus training, and adding CREMA-D
+(91 speakers) to test transfer to a larger, more diverse corpus.
+
+\section{Conclusion}
+\input{sections/conclusion.tex}
+
+\paragraph{Reproducibility.} All code, the exact library versions and the scripts that generate every number and
+figure in this report are in the project repository (\texttt{README.md}); the pipeline runs end-to-end with four
+commands.
