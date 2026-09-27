@@ -13,3 +13,10 @@ WARNING:tensorflow:6 out of the last 8 calls to <function TensorFlowTrainer.make
   CNN_BiLSTM: 29 epochs, 16.7 min
 saved leaky
 === speaker ===
+  CNN: 24 epochs, 10.6 min
+  CNN_BiLSTM: 26 epochs, 13.1 min
+speaker fold 0 done
+  CNN: 18 epochs, 7.7 min
+  CNN_BiLSTM: 24 epochs, 11.7 min
+speaker fold 1 done
+  CNN: 27 epochs, 11.9 min
