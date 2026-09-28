@@ -248,7 +248,8 @@ def main():
 
     if len(abl):
         names = {"no_zcr": "without ZCR", "no_rms": "without RMSE", "no_chroma": "without Chroma",
-                 "no_mfcc": "without MFCC", "mfcc_only": "MFCC only", "no_augmentation": "without augmentation"}
+                 "no_mfcc": "without MFCC", "mfcc_only": "MFCC only", "no_augmentation": "no augmentation*",
+                 "no_augmentation_patience20": "no augmentation, patience 20"}
         a = abl[(abl["model"] == "CNN") & (abl["variant"] != "full")].sort_values("delta_pp")
         fig, ax = plt.subplots(figsize=(4.6, 2.3))
         ax.barh(range(len(a)), a["delta_pp"], color=BLUE, height=0.55)

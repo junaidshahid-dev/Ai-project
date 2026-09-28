@@ -1,0 +1,14 @@
+\begin{tabular}{lcccc}
+\toprule
+Variant & Input dim. & SVM acc. & 1D-CNN acc. & $\Delta$ CNN (pp) \\
+\midrule
+All features (ZCR+RMSE+MFCC+Chroma) & 3{,}672 & 77.1 & 79.2 & -- \\
+without ZCR & 3{,}564 & 77.1 & 79.9 & +0.7 \\
+without RMSE & 3{,}564 & 77.1 & 79.2 & +0.0 \\
+without MFCC & 1{,}512 & 45.1 & 56.9 & $-$22.2 \\
+without Chroma & 2{,}376 & 79.2 & 73.6 & $-$5.6 \\
+MFCC only & 2{,}160 & 78.5 & 80.6 & +1.4 \\
+No augmentation (paper early stopping) & 3{,}672 & 78.5 & 31.2 & $-$47.9 \\
+No augmentation, patience 20 & 3{,}672 & -- & 74.3 & $-$4.9 \\
+\bottomrule
+\end{tabular}

@@ -37,3 +37,14 @@ saved cross
 === ablation ===
   CNN: 18 epochs, 11.1 min
 ablation no_zcr done
+  CNN: 24 epochs, 11.8 min
+ablation no_rms done
+  CNN: 20 epochs, 4.5 min
+ablation no_mfcc done
+  CNN: 14 epochs, 4.4 min
+ablation no_chroma done
+  CNN: 19 epochs, 5.6 min
+ablation mfcc_only done
+  CNN: 9 epochs, 1.2 min
+ablation no_augmentation done
+saved ablation

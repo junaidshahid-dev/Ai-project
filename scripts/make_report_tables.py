@@ -26,6 +26,16 @@ def pct(x, d=1):
     return f"{100 * x:.{d}f}"
 
 
+def minus(x, d=2):
+    """Number with a typographic minus sign."""
+    return f"{x:.{d}f}".replace("-", "$-$")
+
+
+def signed(x, d=1):
+    """Signed number with a typographic minus, e.g. +1.4 or $-$22.2."""
+    return f"{x:+.{d}f}".replace("-", "$-$")
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     s = json.load(open(ROOT / "results" / "summary.json"))
@@ -102,11 +112,11 @@ def main():
         for _, r in b.iterrows():
             p = f"{r['p_value']:.3f}" if r["p_value"] >= 0.001 else "$<$0.001"
             lines.append(f"{LABELS[r['model']]} & {pct(r['acc_male'])} & {pct(r['acc_female'])} & "
-                         f"{r['gap_pp']:+.1f} & {r['z']:.2f} & {p} \\\\")
+                         f"{signed(r['gap_pp'])} & {minus(r['z'])} & {p} \\\\")
             k = MACRO_NAMES[r["model"]]
             mac(f"GenderMale{k}", pct(r["acc_male"]))
             mac(f"GenderFemale{k}", pct(r["acc_female"]))
-            mac(f"GenderGap{k}", f"{r['gap_pp']:+.1f}")
+            mac(f"GenderGap{k}", signed(r['gap_pp']))
             mac(f"GenderP{k}", p)
         lines += ["\\bottomrule", "\\end{tabular}"]
         (OUT / "tab_gender.tex").write_text("\n".join(lines) + "\n")
@@ -116,7 +126,7 @@ def main():
                  "Emotion & Recall male & Recall female & Gap (pp) \\\\", "\\midrule"]
         for _, r in pe.iterrows():
             lines.append(f"{r['emotion'].capitalize()} & {pct(r['recall_male'])} & {pct(r['recall_female'])} & "
-                         f"{100 * (r['recall_female'] - r['recall_male']):+.1f} \\\\")
+                         f"{signed(100 * (r['recall_female'] - r['recall_male']))} \\\\")
         lines += ["\\bottomrule", "\\end{tabular}"]
         (OUT / "tab_gender_emotion.tex").write_text("\n".join(lines) + "\n")
         acts = s["speaker_per_actor_acc"]
@@ -174,9 +184,10 @@ def main():
         a = pd.DataFrame(s["ablation"])
         names = {"full": "All features (ZCR+RMSE+MFCC+Chroma)", "no_zcr": "without ZCR",
                  "no_rms": "without RMSE", "no_mfcc": "without MFCC", "no_chroma": "without Chroma",
-                 "mfcc_only": "MFCC only", "no_augmentation": "All features, no augmentation"}
+                 "mfcc_only": "MFCC only", "no_augmentation": "No augmentation (paper early stopping)",
+                 "no_augmentation_patience20": "No augmentation, patience 20"}
         dims = {"full": 3672, "no_zcr": 3564, "no_rms": 3564, "no_mfcc": 1512, "no_chroma": 2376,
-                "mfcc_only": 2160, "no_augmentation": 3672}
+                "mfcc_only": 2160, "no_augmentation": 3672, "no_augmentation_patience20": 3672}
         lines = ["\\begin{tabular}{lcccc}", "\\toprule",
                  "Variant & Input dim. & SVM acc. & 1D-CNN acc. & $\\Delta$ CNN (pp) \\\\", "\\midrule"]
         for v in names:
@@ -187,10 +198,15 @@ def main():
             cn = r[r["model"] == "CNN"]
             svs = pct(sv["acc"].iloc[0]) if len(sv) else "--"
             cns = pct(cn["acc"].iloc[0]) if len(cn) else "--"
-            d = f"{cn['delta_pp'].iloc[0]:+.1f}" if len(cn) and v != "full" else "--"
-            lines.append(f"{names[v]} & {dims[v]:,} & {svs} & {cns} & {d} \\\\".replace(",", "{,}"))
+            d = signed(cn['delta_pp'].iloc[0]) if len(cn) and v != "full" else "--"
+            dim = f"{dims[v]:,}".replace(",", "{,}")
+            lines.append(f"{names[v]} & {dim} & {svs} & {cns} & {d} \\\\")
             if len(cn) and v != "full":
-                mac("Abl" + v.replace("_", "").capitalize(), f"{cn['delta_pp'].iloc[0]:+.1f}")
+                key = v.replace("_", "").replace("20", "Twenty").capitalize()
+                mac("Abl" + key, signed(cn['delta_pp'].iloc[0]))
+                mac("AblAcc" + key, pct(cn["acc"].iloc[0]))
+                if len(sv):
+                    mac("AblSvm" + key, signed(sv['delta_pp'].iloc[0]))
         lines += ["\\bottomrule", "\\end{tabular}"]
         (OUT / "tab_ablation.tex").write_text("\n".join(lines) + "\n")
 
@@ -220,6 +236,11 @@ def main():
     if "tess_offset_check" in s:
         oc = s["tess_offset_check"]
         mac("OffsetGain", f"{100 * (oc['offset_0.0']['acc'] - oc['offset_0.6']['acc']):.1f}")
+
+    # Standard error of accuracy on the 144-clip paper test split (1D-CNN)
+    a0 = acc("paper", "CNN")
+    mac("AblSE", f"{100 * np.sqrt(a0 * (1 - a0) / 144):.1f}")
+    mac("AblClipPct", f"{100 / 144:.2f}")
 
     # Compute budget and input statistics quoted in the text
     runs = pd.concat([pd.read_csv(p) for p in sorted((ROOT / "results").glob("runs_*.csv"))])

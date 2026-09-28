@@ -1,0 +1,2 @@
+experiment,fold,model,variant,fit_s,infer_ms,params,epochs,best_val_acc
+ablation,0,CNN,no_augmentation_patience20,833.7521011829376,2.738305264049106,616615,100,0.7708333134651184
