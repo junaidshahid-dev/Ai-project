@@ -20,9 +20,12 @@ augmentation-safe split, unseen speakers, an unseen dataset, and male vs. female
 | `src/ser/models.py` | Baselines (Majority, SVM, Random Forest) and the paper's CNN / CNN_Bi-LSTM / ensemble |
 | `scripts/extract_features.py` | Builds the feature cache (`features/`) |
 | `scripts/run_experiments.py` | Runs all experiments, writes `results/predictions_*.csv` |
+| `scripts/tess_offset_check.py` | Controlled test of the zero-padding explanation (Sec. 4.4 of the report) |
 | `scripts/analyze.py` | Metrics, bias check and figures (`results/tables`, `results/figures`) |
+| `scripts/make_report_tables.py` | Writes every number and table used in the report (`report/generated/`) |
+| `models/` | Final RAVDESS-trained CNN and CNN_Bi-LSTM used by the demo app |
 | `app/app.py` | Optional Streamlit demo (bonus) |
-| `report/` | LaTeX technical report (`main.tex`) and compiled PDF |
+| `report/` | LaTeX technical report (`main.tex`) and compiled PDF (`F26-11_Final_Report.pdf`) |
 | `phase1/` | Phase 1 proposal |
 
 ## Data
@@ -38,8 +41,10 @@ files are removed automatically):
 ```bash
 pip install -r requirements.txt
 python scripts/extract_features.py                       # ~10 min on 4 CPU cores
-python scripts/run_experiments.py paper leaky speaker cross ablation   # several hours on CPU, far less on a GPU
-python scripts/analyze.py                                # tables + figures
+python scripts/run_experiments.py paper leaky speaker cross ablation ablation_control   # ~4 h on a 4-core CPU
+python scripts/tess_offset_check.py                      # controlled zero-padding check (uses models/)
+python scripts/analyze.py                                # tables + figures + results/summary.json
+python scripts/make_report_tables.py                     # LaTeX numbers and tables for the report
 cd report && pdflatex main && bibtex main && pdflatex main && pdflatex main
 streamlit run app/app.py                                 # optional demo
 ```
@@ -55,10 +60,21 @@ All randomness is seeded (seed 42). Results in the report were produced on CPU w
 | leaky | Augment first, then split (copies of a test clip can be in training) | Does the split order inflate accuracy? |
 | speaker | 4-fold speaker-independent CV (6 held-out actors per fold) | Does it work for unseen speakers? + gender bias check |
 | cross | Train RAVDESS → test TESS, and reverse | Does it work on an unseen dataset? |
-| ablation | Remove one feature group / MFCC only / no augmentation | Which features matter? |
+| ablation | Remove one feature group / MFCC only / no augmentation (+ patience control) | Which features matter? |
 
 ## Citation of external resources
 
 Datasets: RAVDESS (Livingstone & Russo, 2018, CC BY-NC-SA 4.0) and TESS (Pichora-Fuller & Dupuis, 2020).
 Libraries: librosa, scikit-learn, TensorFlow/Keras, NumPy, pandas, Matplotlib. The model architecture and
 hyper-parameters follow Tables 2–3 of the base paper; all code in this repository was written for this project.
+
+## Key results (see the report for details)
+
+| Protocol | Ensemble accuracy |
+|---|---|
+| Reported in the paper (RAVDESS) | 97.57% |
+| Paper protocol, augmentation after split | 81.9% |
+| Augmentation before split (leaky) | 96.5% |
+| Speaker-independent (4-fold) | 58.5% ± 1.9 |
+| RAVDESS → TESS / TESS → RAVDESS | 19.7% / 14.1% (chance 14.3% / 20.0%) |
+| Gender gap (speaker-independent) | female 66.2% vs male 50.7%, p < 0.001 |

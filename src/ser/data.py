@@ -27,8 +27,8 @@ TESS_CODES = {
 def _unique_wavs(root):
     """Recursively list .wav files, de-duplicated by filename.
 
-    The Kaggle copies of both datasets contain the same files twice in nested
-    folders, so de-duplication is required to avoid train/test leakage.
+    Some distributed copies of both datasets contain the same files twice in
+    nested folders; de-duplication rules out train/test leakage.
     """
     seen = {}
     for p in sorted(Path(root).rglob("*.wav")):

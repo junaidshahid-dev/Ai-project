@@ -52,16 +52,17 @@ DEEP_BUILDERS = {
 }
 
 
-def train_deep(name, X_tr, y_tr, X_val, y_val, n_classes, seed, epochs=100, verbose=0):
+def train_deep(name, X_tr, y_tr, X_val, y_val, n_classes, seed, epochs=100, patience=5, verbose=0):
     """Training settings from Table 3: Adam (lr 1e-3), batch 64, up to 100
     epochs, early stopping on val_accuracy (patience 5) and LR halving on
-    val_accuracy plateau (patience 3, min 1e-5)."""
+    val_accuracy plateau (patience 3, min 1e-5). `patience` is exposed only for
+    the no-augmentation control in the ablation (see run_experiments.py)."""
     tf.keras.utils.set_random_seed(seed)
     model = DEEP_BUILDERS[name](X_tr.shape[1], n_classes)
     model.compile(optimizer=tf.keras.optimizers.Adam(1e-3),
                   loss="sparse_categorical_crossentropy", metrics=["accuracy"])
     cbs = [
-        callbacks.EarlyStopping(monitor="val_accuracy", patience=5, restore_best_weights=True),
+        callbacks.EarlyStopping(monitor="val_accuracy", patience=patience, restore_best_weights=True),
         callbacks.ReduceLROnPlateau(monitor="val_accuracy", factor=0.5, patience=3, min_lr=1e-5),
     ]
     hist = model.fit(X_tr[..., None], y_tr, validation_data=(X_val[..., None], y_val),

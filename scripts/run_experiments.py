@@ -4,15 +4,16 @@ Experiments (each saves results/predictions_<exp>.csv and results/runs_<exp>.csv
   paper    : replication of the paper's protocol on RAVDESS: random 80/10/10
              split of clips, augmentation applied to the training clips only
   leaky    : same, but augmentation is applied BEFORE the split, so augmented
-             copies of a test clip can appear in training (tests hypothesis H1)
+             copies of a test clip can appear in training (tests hypothesis H2)
   speaker  : RAVDESS 4-fold speaker-independent CV (6 actors per fold,
-             3 male + 3 female); every actor is tested exactly once (H2, H4)
-  cross    : train on all RAVDESS -> test on TESS, and the reverse (H3)
-  ablation : paper split, 1D-CNN, one feature group removed / MFCC only /
-             no augmentation (H5)
+             3 male + 3 female); every actor is tested exactly once (H3, H5)
+  cross    : train on all RAVDESS -> test on TESS, and the reverse (H4)
+  ablation : paper split, 1D-CNN and SVM, one feature group removed / MFCC
+             only / no augmentation (H6)
+  ablation_control : no augmentation with early-stopping patience 20
 
 Usage:
-    python scripts/run_experiments.py paper leaky speaker cross ablation
+    python scripts/run_experiments.py paper leaky speaker cross ablation ablation_control
 """
 import argparse
 import json
@@ -58,7 +59,7 @@ def samples(X, idx, aug, cols):
     return v.reshape(len(idx) * k, *v.shape[2:]), k
 
 
-def fit_predict(train, val, test, models, save_dir=None, tag=""):
+def fit_predict(train, val, test, models, save_dir=None, tag="", patience=5):
     """train/val/test are (frames, labels) tuples; returns test probabilities and run info."""
     (F_tr, y_tr), (F_val, y_val), (F_te, _) = train, val, test
     probas, info = {}, {}
@@ -86,7 +87,7 @@ def fit_predict(train, val, test, models, save_dir=None, tag=""):
         if name not in models:
             continue
         t0 = time.time()
-        model, hist = train_deep(name, V_tr, y_tr, V_val, y_val, N_CLASSES, SEED)
+        model, hist = train_deep(name, V_tr, y_tr, V_val, y_val, N_CLASSES, SEED, patience=patience)
         fit_s = time.time() - t0
         t0 = time.time()
         probas[name] = predict_deep(model, V_te)
@@ -205,12 +206,21 @@ def run(exp):
             collect(out, "ablation", 0, mr.iloc[te], p, i, variant=name)
             print(f"ablation {name} done", flush=True)
 
+    elif exp == "ablation_control":
+        # Without augmentation an epoch has 4x fewer updates, so the paper's
+        # early stopping (patience 5 epochs) can stop before the CNN has learned.
+        # Control: no augmentation, patience 20 epochs (= 5 epochs of augmented data).
+        tr, val, te = split_clips(yr, np.arange(len(mr)))
+        p, i = fit_predict((samples(Xr, tr, False, cols)[0], yr[tr]), (samples(Xr, val, False, cols)[0], yr[val]),
+                           (samples(Xr, te, False, cols)[0], yr[te]), ("CNN",), patience=20)
+        collect(out, "ablation", 0, mr.iloc[te], p, i, variant="no_augmentation_patience20")
+
     save(out, exp)
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("experiments", nargs="+", choices=["paper", "leaky", "speaker", "cross", "ablation"])
+    ap.add_argument("experiments", nargs="+", choices=["paper", "leaky", "speaker", "cross", "ablation", "ablation_control"])
     for e in ap.parse_args().experiments:
         RESULTS.mkdir(exist_ok=True)
         print(f"=== {e} ===", flush=True)

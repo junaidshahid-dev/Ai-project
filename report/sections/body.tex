@@ -32,8 +32,9 @@ We use the two Kaggle datasets used by the paper~\cite{kaggleravdess,kaggletess}
 \textbf{RAVDESS}~\cite{livingstone2018}: 1,440 speech clips (16-bit, 48\,kHz) from 24 professional actors
 (12 male, 12 female, odd IDs male) speaking two fixed sentences in eight emotions at two intensities.
 \textbf{TESS}~\cite{tess2020}: 2,800 clips (24.4\,kHz) of the carrier phrase ``Say the word \_\_'' with 200 target
-words, spoken by two female actors aged 26 (YAF) and 64 (OAF) in seven emotions. Both Kaggle copies contain
-duplicated folders; our loader de-duplicates by filename to avoid train--test overlap.
+words, spoken by two female actors aged 26 (YAF) and 64 (OAF) in seven emotions. Some distributed copies of both
+datasets contain the same files in duplicated folders, so our loader de-duplicates by filename to rule out
+train--test overlap.
 
 Following the paper's Table~1 (288 neutral RAVDESS clips), RAVDESS \emph{calm} is merged into \emph{neutral}, and TESS
 \emph{pleasant surprise} is mapped to \emph{surprised}, giving one 7-class label set for both corpora:
@@ -112,7 +113,7 @@ Random Forest. They are trained on exactly the same (augmented) training clips a
         data is used for training, early stopping or normalisation.
 \end{enumerate}
 The ablation (H6) retrains the 1D-CNN and SVM under P1 with one feature group removed, with MFCC only, and
-without augmentation. We report accuracy, macro-F1 (robust to RAVDESS's larger neutral class) and, for comparison
+without augmentation (plus a control with longer early-stopping patience, Sec.~\ref{sec:ablation}). We report accuracy, macro-F1 (robust to RAVDESS's larger neutral class) and, for comparison
 with the paper, weighted F1. The \textbf{bias check} compares accuracy on the 12 male versus the 12 female RAVDESS
 actors under P3 with a two-proportion $z$-test ($n\!=\!720$ clips per group).
 
@@ -128,7 +129,7 @@ actors under P3 with a two-proportion $z$-test ($n\!=\!720$ clips per group).
   \item \textbf{Compute.} Convolving a 3,672-step input with 128 filters is expensive on a CPU: one epoch takes
         about 30\,s for the 1D-CNN and longer for the Bi-LSTM variant, so the \NumTrainings{} training runs of this
         study took roughly \ComputeHours{} hours. We therefore ran the ablation on one split rather than four folds.
-  \item \textbf{Dataset access and duplicates.} Both Kaggle datasets ship duplicated folders; without
+  \item \textbf{Duplicated files.} Copies of both datasets can contain duplicated folders; without
         de-duplication identical files would appear in both training and test sets.
   \item \textbf{Different clip lengths.} TESS clips are about 2\,s long, so after the paper's 0.6\,s offset
         \TessPadPct\% of TESS frames are zero padding versus none for RAVDESS, an input shift that matters for
