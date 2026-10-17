@@ -27,6 +27,7 @@ augmentation-safe split, unseen speakers, an unseen dataset, and male vs. female
 | `app/app.py` | Optional Streamlit demo (bonus) |
 | `report/` | LaTeX technical report (`main.tex`) and compiled PDF (`F26-11_Final_Report.pdf`) |
 | `phase1/` | Phase 1 proposal |
+| `phase2/` | Phase 2 (data): `F26-11.ipynb` / `F26-11.py` (collection, quality checks, preprocessing, EDA), report `F26-11.pdf`, figures |
 
 ## Data
 
