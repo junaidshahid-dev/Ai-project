@@ -63,7 +63,7 @@ story = [
 info = [
     [Paragraph("<b>Group ID</b>", cell), Paragraph("F26-11", cell),
      Paragraph("<b>Track</b>", cell), Paragraph("B – Research &amp; Development", cell)],
-    [Paragraph("<b>Members</b>", cell), Paragraph("22L-7786 (Lead), 23L-3002", cell),
+    [Paragraph("<b>Members</b>", cell), Paragraph("22L-7786 (Lead), 23L-3002, 23L-3102", cell),
      Paragraph("<b>Instructor</b>", cell), Paragraph("Hajra Waheed", cell)],
     [Paragraph("<b>Code</b>", cell), Paragraph("F26-11.ipynb (also F26-11.py) · "
                + link("https://github.com/junaidshahid-dev/Ai-project"), cell), "", ""],
@@ -215,5 +215,5 @@ story += [
 
 SimpleDocTemplate(str(OUT), pagesize=A4, leftMargin=2 * cm, rightMargin=2 * cm, topMargin=1.6 * cm,
                   bottomMargin=1.6 * cm, title="F26-11 Phase 2 – Data Acquisition & Setup",
-                  author="F26-11 (22L-7786, 23L-3002)").build(story)
+                  author="F26-11 (22L-7786, 23L-3002, 23L-3102)").build(story)
 print("wrote", OUT)

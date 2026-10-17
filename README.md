@@ -1,7 +1,7 @@
 # F26-11 — Lightweight Speech Emotion Recognition: Replication, Generalization and Bias Analysis
 
 AI2002 Artificial Intelligence (BS-SE-5A), FAST-NUCES Lahore, Fall 2026 — **Track B (Research & Development)**
-Members: 22L-7786 (Lead), 23L-3002 · Instructor: Hajra Waheed
+Members: 22L-7786 (Lead), 23L-3002, 23L-3102 · Instructor: Hajra Waheed
 
 Base paper: J. H. Chowdhury, S. Ramanna, K. Kotecha, "Speech emotion recognition with light weight deep
 neural ensemble model using hand crafted features," *Scientific Reports* 15, 11824 (2025).

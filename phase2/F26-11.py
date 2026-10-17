@@ -3,7 +3,7 @@
 # **Lightweight Speech Emotion Recognition: Cross-Dataset Generalization and Gender-Bias Analysis**
 #
 # AI2002 Artificial Intelligence (BS-SE-5A), FAST-NUCES Lahore, Fall 2026 · Track B (Research & Development)
-# Members: 22L-7786 (Lead), 23L-3002 · Instructor: Hajra Waheed
+# Members: 22L-7786 (Lead), 23L-3002, 23L-3102 · Instructor: Hajra Waheed
 #
 # This notebook covers Phase 2 of the project: it collects the two datasets, checks their quality,
 # maps them to one label set, explores them, and turns every clip into the model-ready feature matrix used
