@@ -28,6 +28,7 @@ augmentation-safe split, unseen speakers, an unseen dataset, and male vs. female
 | `report/` | LaTeX technical report (`main.tex`) and compiled PDF (`F26-11_Final_Report.pdf`) |
 | `phase1/` | Phase 1 proposal |
 | `phase2/` | Phase 2 (data): `F26-11.ipynb` / `F26-11.py` (collection, quality checks, preprocessing, EDA), report `F26-11.pdf`, figures |
+| `phase3/` | Phase 3 (models): `F26-11.ipynb` / `F26-11.py` (train SVM, Random Forest, CNN, CNN-BiLSTM and ensemble; evaluate; predict a .wav file), report `F26-11.pdf`, figures, trained models, study guide `HOW_IT_WORKS.md` |
 
 ## Data
 
@@ -42,6 +43,7 @@ files are removed automatically):
 ```bash
 pip install -r requirements.txt
 python scripts/extract_features.py                       # ~10 min on 4 CPU cores
+cd phase3 && jupyter nbconvert --to notebook --execute --inplace F26-11.ipynb && cd ..   # Phase 3 models, ~3 h on a 2-core CPU
 python scripts/run_experiments.py paper leaky speaker cross ablation ablation_control   # ~4 h on a 4-core CPU
 python scripts/tess_offset_check.py                      # controlled zero-padding check (uses models/)
 python scripts/analyze.py                                # tables + figures + results/summary.json
