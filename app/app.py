@@ -38,13 +38,23 @@ if not (MODEL_DIR / "normalizer.npz").exists():
 
 nets, mu, sd = load_models()
 upload = st.file_uploader("Upload a speech clip (.wav)", type=["wav"])
+options = ["(none)"] + [p.name for p in sorted((ROOT / "app" / "examples").glob("*.wav"))]
+start = st.query_params.get("example", "(none)")
+choice = st.selectbox("…or try an example clip", options, index=options.index(start) if start in options else 0)
+audio = None
 if upload:
-    st.audio(upload)
-    x = flatten(frame_features(load_audio(io.BytesIO(upload.getvalue())))[None])
+    audio = upload.getvalue()
+elif choice != "(none)":
+    audio = (ROOT / "app" / "examples" / choice).read_bytes()
+if audio:
+    st.audio(audio, format="audio/wav")
+    x = flatten(frame_features(load_audio(io.BytesIO(audio)))[None])
     x = ((x - mu) / sd)[..., None]
     proba = np.mean([m.predict(x, verbose=0)[0] for m in nets], axis=0)
     top = int(proba.argmax())
     st.subheader(f"Predicted emotion: **{EMOTIONS[top]}** ({100 * proba[top]:.1f}%)")
     st.bar_chart(pd.DataFrame({"probability": proba}, index=EMOTIONS))
     st.info("The model was trained on acted North-American English speech; accuracy on other "
-            "speakers, languages or recording conditions is substantially lower (see report, Section 4).")
+            "speakers, languages or recording conditions is substantially lower (see the final report).")
+st.caption("Example clips: RAVDESS (Livingstone & Russo, 2018, CC BY-NC-SA 4.0; part of the training data) and "
+           "TESS (Pichora-Fuller & Dupuis, 2020; a dataset the model never saw).")

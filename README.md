@@ -3,7 +3,7 @@
 AI2002 Artificial Intelligence (BS-SE-5A), FAST-NUCES Lahore, Fall 2026 — **Track B (Research & Development)**
 Members: 22L-7786 (Lead), 23L-3002, 23L-3102 · Instructor: Hajra Waheed
 
-**Final report:** [`phase6/F26-11.pdf`](phase6/F26-11.pdf) · **Demo video:** _add link here_ ·
+**Final report:** [`phase6/F26-11.pdf`](phase6/F26-11.pdf) · **Demo video:** [`phase6/F26-11_demo_video.mp4`](phase6/F26-11_demo_video.mp4) (6 min, narrated) ·
 **Demo app:** `streamlit run app/app.py`
 
 Base paper: J. H. Chowdhury, S. Ramanna, K. Kotecha, "Speech emotion recognition with light weight deep
@@ -40,7 +40,7 @@ follow-up experiments (speaker information in the features, speaker normalisatio
 | `scripts/` | `extract_features.py` (feature cache), `run_experiments.py` (all training runs), `analyze.py` (tables and figures), `tess_offset_check.py`, `make_report_tables.py` |
 | `results/` | Saved per-clip predictions of every experiment, training histories, tables, figures, `summary.json` |
 | `models/` | Final trained models used by the app: `CNN.keras`, `CNN_BiLSTM.keras`, `normalizer.npz` (trained on all of RAVDESS) |
-| `app/app.py` | Streamlit demo: upload a .wav file and get the predicted emotion |
+| `app/app.py`, `app/examples/` | Streamlit demo: upload a .wav file (or pick one of 5 example clips) and get the predicted emotion |
 | `report/` | Earlier LaTeX paper-style write-up of the experiments |
 
 ## Setup
@@ -78,7 +78,7 @@ python scripts/extract_features.py
 streamlit run app/app.py
 ```
 
-A browser tab opens; upload a `.wav` file to see the predicted emotion and the probability of each of the 7
+A browser tab opens; upload a `.wav` file or pick an example clip to see the predicted emotion and the probability of each of the 7
 emotions. The app uses the models in `models/`.
 
 **Run a phase notebook:** open it in Jupyter (`jupyter notebook phase4/F26-11.ipynb`) and choose *Run All*.
