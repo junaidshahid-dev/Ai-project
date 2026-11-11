@@ -4,7 +4,7 @@ AI2002 Artificial Intelligence (BS-SE-5A), FAST-NUCES Lahore, Fall 2026 — **Tr
 Members: 22L-7786 (Lead), 23L-3002, 23L-3102 · Instructor: Hajra Waheed
 
 **Final report:** [`phase6/F26-11.pdf`](phase6/F26-11.pdf) · **Demo video:** [`phase6/F26-11_demo_video.mp4`](phase6/F26-11_demo_video.mp4) (6 min, narrated) ·
-**Demo app:** `streamlit run app/app.py`
+**Live web app:** https://f26-11-speech-emotion.streamlit.app (upload a .wav or pick an example clip)
 
 Base paper: J. H. Chowdhury, S. Ramanna, K. Kotecha, "Speech emotion recognition with light weight deep
 neural ensemble model using hand crafted features," *Scientific Reports* 15, 11824 (2025).

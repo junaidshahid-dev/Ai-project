@@ -85,6 +85,7 @@ def link(u):
 
 plain, norm = NORM.loc["without"], NORM.loc["with speaker normalisation"]
 REPO = "https://github.com/junaidshahid-dev/Ai-project"
+APP = "https://f26-11-speech-emotion.streamlit.app"
 
 # ---------------------------------------------------------------- title + abstract
 story = [
@@ -102,9 +103,11 @@ info = [
      Paragraph("<b>Instructor</b>", cell), Paragraph("Hajra Waheed", cell)],
     [Paragraph("<b>Repository</b>", cell), Paragraph(link(REPO) + " — code, notebooks, trained models, demo "
                                                       "app, README with setup and usage", cell), "", ""],
+    [Paragraph("<b>Web app</b>", cell), Paragraph(link(APP) + " — upload a .wav file or pick an example clip "
+                                                   "to see the predicted emotion", cell), "", ""],
 ]
 t = Table(info, colWidths=[2.3 * cm, 6.3 * cm, 2.2 * cm, 6.0 * cm])
-t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey), ("SPAN", (1, 2), (3, 2)),
+t.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey), ("SPAN", (1, 2), (3, 2)), ("SPAN", (1, 3), (3, 3)),
                        ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#eeeeee")),
                        ("BACKGROUND", (2, 0), (2, 1), colors.HexColor("#eeeeee"))]))
 story += [t, Spacer(1, 6), Paragraph("Abstract", h2), Paragraph(
@@ -395,8 +398,9 @@ story += [
 # ---------------------------------------------------------------- 11 demo + reproducibility
 story += [
     Paragraph("11. Working Product and Reproducibility", h2),
-    Paragraph("<b>Demo app.</b> " + code("streamlit run app/app.py") + " opens a web page where the user uploads a "
-              ".wav file; the app extracts the same 3,672 features, normalises them with the saved training "
+    Paragraph("<b>Web app.</b> The app is hosted online at " + link(APP) + " (or run locally with "
+              + code("streamlit run app/app.py") + "). The user uploads a .wav file or picks one of five example "
+              "clips (three RAVDESS, two from the unseen TESS dataset); the app extracts the same 3,672 features, normalises them with the saved training "
               "statistics, runs both saved models, averages their probabilities and shows the predicted emotion "
               "with a bar chart of all 7 probabilities, plus a warning that accuracy is lower for other speakers and "
               "recording conditions. The features it computes from an uploaded file are identical to the cached "
