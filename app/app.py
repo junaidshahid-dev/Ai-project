@@ -3,8 +3,8 @@
 Run after `python scripts/run_experiments.py cross` has written models/:
     streamlit run app/app.py
 """
+import io
 import sys
-import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -40,10 +40,7 @@ nets, mu, sd = load_models()
 upload = st.file_uploader("Upload a speech clip (.wav)", type=["wav"])
 if upload:
     st.audio(upload)
-    with tempfile.NamedTemporaryFile(suffix=".wav") as tmp:
-        tmp.write(upload.getvalue())
-        tmp.flush()
-        x = flatten(frame_features(load_audio(tmp.name))[None])
+    x = flatten(frame_features(load_audio(io.BytesIO(upload.getvalue())))[None])
     x = ((x - mu) / sd)[..., None]
     proba = np.mean([m.predict(x, verbose=0)[0] for m in nets], axis=0)
     top = int(proba.argmax())

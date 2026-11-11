@@ -1,0 +1,21 @@
+protocol,comparison,only A right,only B right,p_value
+Random split (paper),Ensemble vs SVM,20,13,0.2962
+Random split (paper),Ensemble vs CNN,8,4,0.3877
+Random split (paper),CNN_BiLSTM vs CNN,10,7,0.6291
+Random split (paper),SVM vs RandomForest,17,6,0.0347
+Augment before split,Ensemble vs SVM,73,10,0.0
+Augment before split,Ensemble vs CNN,11,6,0.3323
+Augment before split,CNN_BiLSTM vs CNN,14,21,0.3105
+Augment before split,SVM vs RandomForest,116,35,0.0
+Unseen speakers,Ensemble vs SVM,287,152,0.0
+Unseen speakers,Ensemble vs CNN,85,59,0.0369
+Unseen speakers,CNN_BiLSTM vs CNN,142,144,0.9529
+Unseen speakers,SVM vs RandomForest,234,201,0.1249
+RAVDESS → TESS,Ensemble vs SVM,274,392,0.0
+RAVDESS → TESS,Ensemble vs CNN,99,44,0.0
+RAVDESS → TESS,CNN_BiLSTM vs CNN,192,188,0.8777
+RAVDESS → TESS,SVM vs RandomForest,279,480,0.0
+TESS → RAVDESS,Ensemble vs SVM,203,196,0.7639
+TESS → RAVDESS,Ensemble vs CNN,0,0,1.0
+TESS → RAVDESS,CNN_BiLSTM vs CNN,195,202,0.7634
+TESS → RAVDESS,SVM vs RandomForest,71,82,0.4189
