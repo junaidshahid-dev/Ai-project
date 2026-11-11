@@ -1,0 +1,6 @@
+tensorflow-cpu==2.21.0
+librosa==0.11.0
+soundfile
+numpy
+pandas
+streamlit
